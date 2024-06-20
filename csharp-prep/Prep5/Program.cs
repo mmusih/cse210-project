@@ -4,10 +4,10 @@ class Program
 {
     static void Main(string[] args)
     {
-        WelcomeMessage();
+        DisplayWelcome();
         
-        string userName = PromptName();
-        int userNumber = PromptNumber();
+        string userName = PromptUserName();
+        int userNumber = PromptUserNumber();
 
         int squaredNumber = SquareNumber(userNumber);
 
@@ -15,18 +15,18 @@ class Program
     }
 
         
-    static void WelcomeMessage(){
+    static void DisplayWelcome(){
         Console.WriteLine("Welcome to the program!");
         }
         
-    static string  PromptName (){
+    static string  PromptUserName (){
         Console.WriteLine("Please Enter Your name: ");
         string name = Console.ReadLine();
 
         return name;
         }
 
-    static int PromptNumber()
+    static int PromptUserNumber()
     {
         Console.Write("Please enter your favorite number: ");
         int number = int.Parse(Console.ReadLine());
