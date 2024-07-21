@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 
 public class Activity
 {
@@ -8,41 +9,51 @@ public class Activity
 
     public Activity()
     {
-        _name = "Generic Activity";
-        _description = "This is a generic activity.";
-        _duration = 60; // Default duration in seconds
     }
 
-    public virtual void DisplayStartingMessage()
+    protected void DisplayStartingMessage()
     {
-        Console.WriteLine($"Starting {_name}...");
+        Console.WriteLine($"Starting {_name}");
         Console.WriteLine(_description);
-        Console.WriteLine($"Duration: {_duration} seconds.");
-        Console.WriteLine("Get ready to begin...");
-        ShowCountDown(3);
+        Console.Write("Enter the duration of the activity in seconds: ");
+        _duration = int.Parse(Console.ReadLine());
+        Console.WriteLine("Prepare to begin...");
+        ShowSpinner(5);
     }
 
-    public virtual void DisplayEndingMessage()
+    protected void DisplayEndingMessage()
     {
-        Console.WriteLine($"Congratulations! You've completed {_name}.");
-        Console.WriteLine($"Total duration: {_duration} seconds.");
-        ShowCountDown(3);
+        Console.WriteLine("Good job! You have completed the activity.");
+        Console.WriteLine($"You have completed the {_name} for {_duration} seconds.");
+        ShowSpinner(5);
     }
 
     protected void ShowSpinner(int seconds)
     {
-        // Simulate showing a spinner animation
-        Console.WriteLine("Spinner animation...");
-        System.Threading.Thread.Sleep(seconds * 1000);
+        for (int i = 0; i < seconds * 4; i++)
+        {
+            Console.Write("/");
+            Thread.Sleep(250);
+            Console.Write("\b");
+            Console.Write("-");
+            Thread.Sleep(250);
+            Console.Write("\b");
+            Console.Write("\\");
+            Thread.Sleep(250);
+            Console.Write("\b");
+            Console.Write("|");
+            Thread.Sleep(250);
+            Console.Write("\b");
+        }
     }
 
     protected void ShowCountDown(int seconds)
     {
-        // Simulate showing a countdown
         for (int i = seconds; i > 0; i--)
         {
-            Console.WriteLine($"Countdown: {i}...");
-            System.Threading.Thread.Sleep(1000);
+            Console.Write(i);
+            Thread.Sleep(1000);
+            Console.Write("\b \b");
         }
     }
 }

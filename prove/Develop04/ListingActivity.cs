@@ -9,36 +9,49 @@ public class ListingActivity : Activity
     public ListingActivity()
     {
         _name = "Listing Activity";
-        _description = "This activity will help you list things in a certain area.";
-        _count = 0;
-        _prompts = new List<string> { "Prompt 1", "Prompt 2", "Prompt 3" }; // Example prompts
+        _description = "This activity will help you reflect on the good things in your life by having you list as many things as you can in a certain area.";
+        _prompts = new List<string>
+        {
+            "Who are people that you appreciate?",
+            "What are your personal strengths?",
+            "Who are people that you have helped this week?",
+            "When have you felt the Holy Ghost this month?",
+            "Who are some of your personal heroes?"
+        };
     }
 
     public void RunActivity()
     {
         DisplayStartingMessage();
-        // Implement specific behavior for ListingActivity
         Console.WriteLine("Running Listing Activity...");
-        DisplayPrompts();
-        GetListFromUser();
+        ShowListingPrompt();
         DisplayEndingMessage();
     }
 
-    private void DisplayPrompts()
+    private void ShowListingPrompt()
     {
-        foreach (var prompt in _prompts)
-        {
-            Console.WriteLine($"Prompt: {prompt}");
-        }
+        Random random = new Random();
+        string prompt = _prompts[random.Next(_prompts.Count)];
+        Console.WriteLine(prompt);
         ShowCountDown(5);
+        List<string> userList = GetListFromUser();
+        _count = userList.Count;
+        Console.WriteLine($"You listed {_count} items.");
     }
 
-    public List<string> GetListFromUser()
+    private List<string> GetListFromUser()
     {
-        // Simulate user input for listing items
-        List<string> items = new List<string> { "Item 1", "Item 2", "Item 3" }; // Example items
-        _count = items.Count;
-        Console.WriteLine($"Listed {_count} items.");
-        return items;
+        List<string> userList = new List<string>();
+        Console.WriteLine("Start listing items...");
+        DateTime endTime = DateTime.Now.AddSeconds(_duration);
+        while (DateTime.Now < endTime)
+        {
+            string input = Console.ReadLine();
+            if (!string.IsNullOrEmpty(input))
+            {
+                userList.Add(input);
+            }
+        }
+        return userList;
     }
 }
