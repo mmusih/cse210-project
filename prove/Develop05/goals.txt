@@ -1,0 +1,4 @@
+0
+SimpleGoal|Give a talk|Speak in Sacrament when asked|100|System.Func`1[System.Boolean]
+EternalGoal|Study the Scriptures|Read scritptures for atleast 10 min everyday|10
+ChecklistGoal|Attend temple|Attend and perform any ordinance|50|0|500|1000
