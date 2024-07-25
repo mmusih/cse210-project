@@ -2,7 +2,6 @@ public class GoalManager
 {
     private List<Goal> _goals;
     private int _score;
-    private string _folderPath = "savefolder/";
 
     public GoalManager()
     {
@@ -15,38 +14,29 @@ public class GoalManager
         bool running = true;
         while (running)
         {
-            Console.WriteLine("Eternal Quest Goal Tracker");
-            Console.WriteLine("1. Display Player Info");
-            Console.WriteLine("2. List Goals");
-            Console.WriteLine("3. Create Goal");
-            Console.WriteLine("4. Record Event");
-            Console.WriteLine("5. Save Goals");
-            Console.WriteLine("6. Load Goals");
-            Console.WriteLine("7. Exit");
-            Console.Write("Select an option: ");
+            Console.Clear();
+            DisplayPlayerInfo();
+            DisplayMenu();
+            
             string choice = Console.ReadLine();
-
             switch (choice)
             {
                 case "1":
-                    DisplayPlayerInfo();
+                    CreateGoal();
                     break;
                 case "2":
                     ListGoals();
                     break;
                 case "3":
-                    CreateGoal();
-                    break;
-                case "4":
-                    RecordEvent();
-                    break;
-                case "5":
                     SaveGoals();
                     break;
-                case "6":
+                case "4":
                     LoadGoals();
                     break;
-                case "7":
+                case "5":
+                    RecordEvent();
+                    break;
+                case "6":
                     running = false;
                     break;
                 default:
@@ -58,21 +48,36 @@ public class GoalManager
 
     private void DisplayPlayerInfo()
     {
-        Console.WriteLine($"Player Score: {_score}");
+        Console.WriteLine($"Player Score: {_score}\n");
+    }
+
+    private void DisplayMenu()
+    {
+        Console.WriteLine("Menu Options:");
+        Console.WriteLine("1. Create New Goal");
+        Console.WriteLine("2. List Goals");
+        Console.WriteLine("3. Save Goals");
+        Console.WriteLine("4. Load Goals");
+        Console.WriteLine("5. Record Event");
+        Console.WriteLine("6. Quit");
+        Console.Write("Select a choice from the menu: ");
     }
 
     private void ListGoals()
     {
-        Console.WriteLine("Goals:");
+        Console.WriteLine("\nGoals:");
         foreach (var goal in _goals)
         {
             Console.WriteLine(goal.GetDetailsString());
         }
+        Console.WriteLine();
+        Console.WriteLine("Press any key to return to the menu.");
+        Console.ReadKey();
     }
 
     private void CreateGoal()
     {
-        Console.WriteLine("Select goal type:");
+        Console.WriteLine("\nSelect goal type:");
         Console.WriteLine("1. Simple Goal");
         Console.WriteLine("2. Eternal Goal");
         Console.WriteLine("3. Checklist Goal");
@@ -107,55 +112,58 @@ public class GoalManager
     }
 
     private void RecordEvent()
-{
-    Console.WriteLine("Select a goal to record:");
-    for (int i = 0; i < _goals.Count; i++)
     {
-        Console.WriteLine($"{i + 1}. {_goals[i].ShortName}");
+        Console.WriteLine("\nSelect a goal to record:");
+        for (int i = 0; i < _goals.Count; i++)
+        {
+            Console.WriteLine($"{i + 1}. {_goals[i].ShortName}");
+        }
+
+        int index = int.Parse(Console.ReadLine()) - 1;
+        if (index < 0 || index >= _goals.Count)
+        {
+            Console.WriteLine("Invalid selection.");
+            return;
+        }
+
+        var goal = _goals[index];
+        goal.RecordEvent();
+        _score += goal.Points;
+
+        if (goal is ChecklistGoal checklistGoal && checklistGoal.IsComplete())
+        {
+            _score += checklistGoal.Bonus;
+        }
     }
-
-    int index = int.Parse(Console.ReadLine()) - 1;
-    if (index < 0 || index >= _goals.Count)
-    {
-        Console.WriteLine("Invalid selection.");
-        return;
-    }
-
-    var goal = _goals[index];
-    goal.RecordEvent();
-    _score += goal.Points;
-
-    if (goal is ChecklistGoal checklistGoal && checklistGoal.IsComplete())
-    {
-        _score += checklistGoal.Bonus;
-    }
-}
-
 
     private void SaveGoals()
     {
-        Console.Write("\nWhat would you like to name the file? : ");
+        Console.Write("Enter the filename to save goals: ");
         string fileName = Console.ReadLine();
-
-        using StreamWriter saveGoals = new($"{_folderPath}{fileName}.txt");
-        saveGoals.WriteLine(_score);
-        foreach (Goal goal in _goals)
-        {
-            saveGoals.WriteLine(goal.GetStringRepresentation());
-        }
-        _goals.Clear();
         
+        using (StreamWriter writer = new StreamWriter(fileName))
+        {
+            writer.WriteLine(_score);
+            foreach (var goal in _goals)
+            {
+                writer.WriteLine(goal.GetStringRepresentation());
+            }
+        }
+        Console.WriteLine("Goals saved successfully.");
     }
 
     private void LoadGoals()
     {
-        if (!File.Exists("goals.txt"))
+        Console.Write("Enter the filename to load goals: ");
+        string fileName = Console.ReadLine();
+        
+        if (!File.Exists(fileName))
         {
             Console.WriteLine("No saved goals found.");
             return;
         }
 
-        using (StreamReader reader = new StreamReader("goals.txt"))
+        using (StreamReader reader = new StreamReader(fileName))
         {
             _score = int.Parse(reader.ReadLine());
             _goals.Clear();
